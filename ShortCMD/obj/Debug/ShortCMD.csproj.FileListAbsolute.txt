@@ -1,0 +1,10 @@
+C:\Users\42373\Documents\Other\Programming\TShock Plugins\ShortCMDre\ShortCMD\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\42373\Documents\Other\Programming\TShock Plugins\ShortCMDre\Compiled\ShortCMD.dll
+C:\Users\42373\Documents\Other\Programming\TShock Plugins\ShortCMDre\Compiled\ShortCMD.pdb
+C:\Users\42373\Documents\Other\Programming\TShock Plugins\ShortCMDre\ShortCMD\obj\Debug\ShortCMD.dll
+C:\Users\42373\Documents\Other\Programming\TShock Plugins\ShortCMDre\ShortCMD\obj\Debug\ShortCMD.pdb
+C:\Users\42373\Documents\Other\Programming\TShock Plugins\ShortCMD\Compiled\ShortCMD.dll
+C:\Users\42373\Documents\Other\Programming\TShock Plugins\ShortCMD\Compiled\ShortCMD.pdb
+C:\Users\42373\Documents\Other\Programming\TShock Plugins\ShortCMD\ShortCMD\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\42373\Documents\Other\Programming\TShock Plugins\ShortCMD\ShortCMD\obj\Debug\ShortCMD.dll
+C:\Users\42373\Documents\Other\Programming\TShock Plugins\ShortCMD\ShortCMD\obj\Debug\ShortCMD.pdb

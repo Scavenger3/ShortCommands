@@ -1,0 +1,7 @@
+{
+  "Commands": {
+    "/shop": "/warp shop",
+    "/swift": "/buff 3 500",
+    "/noon": "/time noon"
+  }
+}
