@@ -36,7 +36,7 @@ namespace ShortCMD
 
         public override Version Version
         {
-            get { return new Version("1.0"); }
+            get { return new Version("1.0.1"); }
         }
 
         public override void Initialize()
@@ -62,9 +62,13 @@ namespace ShortCMD
             getConfig = new dsConfig();
         }
 
+        public void OnInitialize()
+        {
+            Commands.ChatCommands.Add(new Command("shortcmd", scmd, "scmdrl"));
+            SetupConfig();
+        }
 
         #region Config
-
         public static void SetupConfig()
         {
             try
@@ -88,31 +92,25 @@ namespace ShortCMD
 
         #region Config Reload
 
-        public static void ReloadConfig(CommandArgs sendto)
+        public static void scmd(CommandArgs args)
         {
             try
             {
                 if (File.Exists(getConfigPath))
                 {
                     getConfig = dsConfig.Read(getConfigPath);
-                    sendto.Player.SendMessage("Config file reloaded sucessfully!", Color.Green);
+                    args.Player.SendMessage("Config file reloaded sucessfully!", Color.Green);
                 }
                 getConfig.Write(getConfigPath);
             }
             catch (Exception ex)
             {
-                sendto.Player.SendMessage("Error in config file! Check log for more details.", Color.Red);
+                args.Player.SendMessage("Error in config file! Check log for more details.", Color.Red);
                 Log.Error("Config Exception in ShortCommands Config file");
                 Log.Error(ex.ToString());
             }
         }
         #endregion Config Reload
-
-        public void OnInitialize()
-        {
-            SetupConfig();
-            Commands.ChatCommands.Add(new Command("shortcmd", scmd, "scmdrl"));
-        }
 
         public void OnChat(messageBuffer buff, int who, string text, HandledEventArgs e)
         {
@@ -124,14 +122,12 @@ namespace ShortCMD
                 if (Pair.Key == text)
                 {
                     e.Handled = true;
-                    Commands.HandleCommand(TShock.Players[who], getConfig.Commands[Pair.Key]);
+                    foreach (var cmd in Pair.Value)
+                    {
+                        Commands.HandleCommand(TShock.Players[who], cmd);
+                    }
                 }
             }
-        }
-
-        public static void scmd(CommandArgs args)
-        {
-            ReloadConfig(args);
         }
     }
 }
@@ -140,7 +136,7 @@ namespace Config
 {
     public class dsConfig
     {
-        public Dictionary<string, string> Commands = new Dictionary<string, string> ();
+        public Dictionary<string, string[]> Commands = new Dictionary<string, string[]> ();
 
         public static dsConfig Read(string path)
         {

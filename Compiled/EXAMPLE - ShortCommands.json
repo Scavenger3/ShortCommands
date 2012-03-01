@@ -1,7 +1,22 @@
 {
   "Commands": {
-    "/shop": "/warp shop",
-    "/swift": "/buff 3 500",
-    "/noon": "/time noon"
+    "/buffme": [
+      "/buff 1 500",
+      "/buff 2 500",
+      "/buff 3 500",
+	  "/buff 5 500",
+	  "/buff 11 500"
+    ]
+  },
+      "/startgame": [
+      "/hidewarp game false",
+      "/bc A new game is about to start!",
+      "/bc type /game to teleport there!"
+    ]
+  },
+      "/endgame": [
+      "/hidewarp game true",
+      "/bc The game has finished!"
+    ]
   }
 }
