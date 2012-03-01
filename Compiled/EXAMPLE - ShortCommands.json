@@ -6,15 +6,13 @@
       "/buff 3 500",
 	  "/buff 5 500",
 	  "/buff 11 500"
-    ]
-  },
-      "/startgame": [
+    ],
+	"/startgame": [
       "/hidewarp game false",
       "/bc A new game is about to start!",
       "/bc type /game to teleport there!"
-    ]
-  },
-      "/endgame": [
+    ],
+	"/endgame": [
       "/hidewarp game true",
       "/bc The game has finished!"
     ]
