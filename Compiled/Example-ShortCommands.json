@@ -1,0 +1,39 @@
+{
+  "Commands": [
+    {
+      "alias": "/rname",
+      "commands": [
+        "/region name"
+      ],
+      "permission": "regionname"
+    },
+    {
+      "alias": "/buffme",
+      "commands": [
+        "/buff 1 500",
+        "/buff 2 500",
+        "/buff 3 500",
+        "/buff 5 500",
+        "/buff 11 500"
+      ],
+      "permission": ""
+    },
+    {
+      "alias": "/startgame",
+      "commands": [
+        "/hidewarp game false",
+        "/bc A new game is about to start!",
+        "/bc type /game to teleport there!"
+      ],
+      "permission": ""
+    },
+	{
+      "alias": "/endgame",
+      "commands": [
+      "/hidewarp game true",
+      "/bc The game has finished!"
+    ],
+      "permission": ""
+    },
+  ]
+}

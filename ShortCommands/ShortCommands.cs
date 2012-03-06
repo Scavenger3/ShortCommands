@@ -10,6 +10,8 @@ using System.ComponentModel;
 using System.IO;
 using Newtonsoft.Json;
 using Config;
+using ShortCommands;
+using System.Linq;
 
 namespace ShortCommands
 {
@@ -17,8 +19,8 @@ namespace ShortCommands
     public class ShortCommands : TerrariaPlugin
     {
         public static dsConfig getConfig { get; set; }
-        internal static string getConfigPath { get { return Path.Combine(TShock.SavePath, "PluginConfigs/ShortCommands.json"); } }
-
+        internal static string ConfigPath { get { return Path.Combine(TShock.SavePath, "PluginConfigs/ShortCommands.json"); } }
+        
         public override string Name
         {
             get { return "ShortCommands"; }
@@ -36,7 +38,7 @@ namespace ShortCommands
 
         public override Version Version
         {
-            get { return new Version("1.0.2"); }
+            get { return new Version("1.0.3"); }
         }
 
         public override void Initialize()
@@ -73,11 +75,10 @@ namespace ShortCommands
         {
             try
             {
-                if (File.Exists(getConfigPath))
-                {
-                    getConfig = dsConfig.Read(getConfigPath);
-                }
-                getConfig.Write(getConfigPath);
+                if (!File.Exists(ConfigPath))
+                    NewConfig();
+                getConfig = dsConfig.Read(ConfigPath);
+                getConfig.Write(ConfigPath);
             }
             catch (Exception ex)
             {
@@ -91,17 +92,15 @@ namespace ShortCommands
         #endregion Config
 
         #region Config Reload
-
         public static void scmd(CommandArgs args)
         {
             try
             {
-                if (File.Exists(getConfigPath))
-                {
-                    getConfig = dsConfig.Read(getConfigPath);
-                    args.Player.SendMessage("Config file reloaded sucessfully!", Color.Green);
-                }
-                getConfig.Write(getConfigPath);
+                if (!File.Exists(ConfigPath))
+                    NewConfig();
+                getConfig = dsConfig.Read(ConfigPath);
+                getConfig.Write(ConfigPath);
+                args.Player.SendMessage("Config file reloaded sucessfully!", Color.Green);
             }
             catch (Exception ex)
             {
@@ -112,22 +111,101 @@ namespace ShortCommands
         }
         #endregion Config Reload
 
+        #region Generate New Config
+        public static void NewConfig()
+        {
+            File.WriteAllText(ConfigPath,
+            "{" + Environment.NewLine +
+            "  \"Commands\": [" + Environment.NewLine +
+            "    {" + Environment.NewLine +
+            "      \"alias\": \"/rname\"," + Environment.NewLine +
+            "      \"commands\": [" + Environment.NewLine +
+            "        \"/region name\"" + Environment.NewLine +
+            "      ]," + Environment.NewLine +
+            "      \"permission\": \"regionname\"" + Environment.NewLine +
+            "    }," + Environment.NewLine +
+            "    {" + Environment.NewLine +
+            "      \"alias\": \"/buffme\"," + Environment.NewLine +
+            "      \"commands\": [" + Environment.NewLine +
+            "        \"/buff 1 500\"," + Environment.NewLine +
+            "        \"/buff 2 500\"," + Environment.NewLine +
+            "        \"/buff 3 500\"," + Environment.NewLine +
+            "        \"/buff 5 500\"," + Environment.NewLine +
+            "        \"/buff 11 500\"" + Environment.NewLine +
+            "      ]," + Environment.NewLine +
+            "      \"permission\": \"\"" + Environment.NewLine +
+            "    }," + Environment.NewLine +
+            "    {" + Environment.NewLine +
+            "      \"alias\": \"/startgame\"," + Environment.NewLine +
+            "      \"commands\": [" + Environment.NewLine +
+            "        \"/hidewarp game false\"," + Environment.NewLine +
+            "        \"/bc A new game is about to start!\"," + Environment.NewLine +
+            "        \"/bc type /game to teleport there!\"" + Environment.NewLine +
+            "      ]," + Environment.NewLine +
+            "      \"permission\": \"\"" + Environment.NewLine +
+            "    }," + Environment.NewLine +
+            "	{" + Environment.NewLine +
+            "      \"alias\": \"/endgame\"," + Environment.NewLine +
+            "      \"commands\": [" + Environment.NewLine +
+            "      \"/hidewarp game true\"," + Environment.NewLine +
+            "      \"/bc The game has finished!\"" + Environment.NewLine +
+            "    ]," + Environment.NewLine +
+            "      \"permission\": \"\"" + Environment.NewLine +
+            "    }," + Environment.NewLine +
+            "  ]" + Environment.NewLine +
+            "}");
+        }
+        #endregion
+
         public void OnChat(messageBuffer buff, int who, string text, HandledEventArgs e)
         {
             if (!text.StartsWith("/"))
                 return;
 
-            foreach (var Pair in getConfig.Commands)
+            foreach (var Command in getConfig.Commands)
             {
-                if (text == Pair.Key || text.StartsWith(Pair.Key + " "))
+                if (text == cCmd(Command.alias) || text.StartsWith(cCmd(Command.alias) + " "))
                 {
                     e.Handled = true;
-                    foreach (var cmd in Pair.Value)
+                    TSPlayer ply = TShock.Players[who];
+                    if (Command.permission != "" && ply.Group.HasPermission(Command.permission))
                     {
-                        Commands.HandleCommand(TShock.Players[who], cmd + text.Remove(0, Pair.Key.Length));
+                        var OldGroup = ply.Group;
+                        ply.Group = new SuperAdminGroup();
+                        foreach (var cmd in Command.commands)
+                            Commands.HandleCommand(ply, cCmd(cmd) + text.Remove(0, Command.alias.Length));
+                        ply.Group = OldGroup;
                     }
+                    else if (Command.permission == "")
+                    {
+                        foreach (var cmd in Command.commands)
+                            Commands.HandleCommand(ply, cCmd(cmd) + text.Remove(0, cCmd(Command.alias).Length));
+                    }
+                    else
+                        ply.SendMessage("You do not have access to that command.", Color.Red);
                 }
             }
+        }
+
+        public static string cCmd(string command)
+        {
+            if (!(command.StartsWith("/")))
+                return "/" + command;
+            return command;
+        }
+    }
+
+    public class ShortCommand
+    {
+        public string alias;
+        public string[] commands;
+        public string permission;
+
+        public ShortCommand(string alias, string[] commands, string permission)
+        {
+            this.alias = alias;
+            this.commands = commands;
+            this.permission = permission;
         }
     }
 }
@@ -136,7 +214,7 @@ namespace Config
 {
     public class dsConfig
     {
-        public Dictionary<string, string[]> Commands = new Dictionary<string, string[]> ();
+        public List<ShortCommand> Commands = new List<ShortCommand> ();
 
         public static dsConfig Read(string path)
         {
