@@ -15,7 +15,7 @@ using System.Linq;
 
 namespace ShortCommands
 {
-    [APIVersion(1, 11)]
+    [APIVersion(1, 12)]
     public class ShortCommands : TerrariaPlugin
     {
         public static dsConfig getConfig { get; set; }
