@@ -198,7 +198,7 @@ namespace ShortCommands
 						parseCommand(getscPlayer(who), text, command, false);
 					}
 					else
-						sPly.tsPly.SendMessage("You do not have access to that command.", Color.Red);
+						sPly.tsPly.SendMessage("You do not have permission to execute that command.", Color.Red);
 				}
 			}
 		}
@@ -223,7 +223,7 @@ namespace ShortCommands
 		#region parseCommand
 		public static void parseCommand(scPlayer sPly, string Text, scCommand command, bool CanBypassPermissions)
 		{
-			List<string> Parameters = parseParameters(Text);
+			List<string> Parameters = parseParameters(Text, true);
 			Parameters.RemoveAt(0); //remove the cmd alias (/cmd)
 
 			List<Command> validCommands = new List<Command>();
@@ -271,6 +271,16 @@ namespace ShortCommands
 				string cmdName = args[0].ToLower();
 				args.RemoveAt(0);
 
+				for (int i = 0; i < args.Count; i++)
+				{
+					if (args[i].ToLower() == "%name")
+						args[i] = sPly.tsPly.Name;
+					else if (args[i].ToLower() == "%account")
+						args[i] = sPly.tsPly.UserAccountName ?? string.Empty;
+					else if (args[i].ToLower() == "%group")
+						args[i] = sPly.tsPly.Group.Name;
+				}
+
 				IEnumerable<Command> cmds = Commands.ChatCommands.Where(c => c.HasAlias(cmdName));
 
 				if (cmds.Count() == 0)
@@ -317,7 +327,7 @@ namespace ShortCommands
 			if (IsError)
 			{
 				if (maxParameters > 0)
-					sPly.tsPly.SendErrorMessage("{0} parameter{1} are required.".SFormat(maxParameters, (maxParameters > 1 ? "s" : string.Empty)));
+					sPly.tsPly.SendErrorMessage("{0} parameter{1} required.".SFormat(maxParameters, (maxParameters > 1 ? "s are" : " is")));
 				if (invalidCommands.Count > 0)
 					sPly.tsPly.SendErrorMessage("Invalid command{0} {1}.".SFormat((invalidCommands.Count > 1 ? "s" : string.Empty), string.Join(", ", invalidCommands)));
 				if (cantRun.Count > 0)
@@ -383,7 +393,7 @@ namespace ShortCommands
 		#endregion
 
 		#region parseParameters
-		private static List<String> parseParameters(string str)
+		private static List<String> parseParameters(string str, bool includeQuotes = false)
 		{
 			var ret = new List<string>();
 			var sb = new StringBuilder();
@@ -402,6 +412,8 @@ namespace ShortCommands
 					}
 					else if (c == '"')
 					{
+						if (includeQuotes)
+							sb.Append(c);
 						ret.Add(sb.ToString());
 						sb.Clear();
 						instr = false;
@@ -427,6 +439,8 @@ namespace ShortCommands
 							sb.Clear();
 						}
 						instr = true;
+						if (includeQuotes)
+							sb.Append(c);
 					}
 					else
 					{

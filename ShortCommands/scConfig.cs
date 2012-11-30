@@ -112,11 +112,11 @@ namespace ShortCommands
 			"    {" + Environment.NewLine +
 			"      \"alias\": \"/buffme\"," + Environment.NewLine +
 			"      \"commands\": [" + Environment.NewLine +
-			"        \"/buff 1 500\"," + Environment.NewLine +
-			"        \"/buff 2 500\"," + Environment.NewLine +
-			"        \"/buff 3 500\"," + Environment.NewLine +
-			"        \"/buff 5 500\"," + Environment.NewLine +
-			"        \"/buff 11 500\"" + Environment.NewLine +
+			"        \"/buff 1 {0}\"," + Environment.NewLine +
+			"        \"/buff 2 {0}\"," + Environment.NewLine +
+			"        \"/buff 3 {0}\"," + Environment.NewLine +
+			"        \"/buff 5 {0}\"," + Environment.NewLine +
+			"        \"/buff 11 {0}\"" + Environment.NewLine +
 			"      ]," + Environment.NewLine +
 			"      \"permission\": \"buffme\"," + Environment.NewLine +
 			"      \"cooldown\": 60" + Environment.NewLine +
