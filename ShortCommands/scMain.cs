@@ -274,11 +274,11 @@ namespace ShortCommands
 				for (int i = 0; i < args.Count; i++)
 				{
 					if (args[i].ToLower() == "%name")
-						args[i] = sPly.tsPly.Name;
+						args[i] = string.Format("\"{0}\"", sPly.tsPly.Name);
 					else if (args[i].ToLower() == "%account")
-						args[i] = sPly.tsPly.UserAccountName ?? string.Empty;
+						args[i] = string.Format("\"{0}\"", sPly.tsPly.UserAccountName) ?? string.Empty;
 					else if (args[i].ToLower() == "%group")
-						args[i] = sPly.tsPly.Group.Name;
+						args[i] = string.Format("\"{0}\"", sPly.tsPly.Group.Name);
 				}
 
 				IEnumerable<Command> cmds = Commands.ChatCommands.Where(c => c.HasAlias(cmdName));
