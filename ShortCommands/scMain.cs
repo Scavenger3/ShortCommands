@@ -349,9 +349,10 @@ namespace ShortCommands
 				List<string> args = validArgs[i];
 				if (CanBypassPermissions && !sPly.tsPly.Group.HasPermission(cmd.Permission))
 				{
-					sPly.tsPly.Group.AddPermission(cmd.Permission);
+					var oldGroup = sPly.tsPly.Group;
+					sPly.tsPly.Group = new SuperAdminGroup();
 					cmd.Run(cmdText, sPly.tsPly, args);
-					sPly.tsPly.Group.RemovePermission(cmd.Permission);
+					sPly.tsPly.Group = oldGroup;
 				}
 				else
 					cmd.Run(cmdText, sPly.tsPly, args);
