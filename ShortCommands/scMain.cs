@@ -342,21 +342,22 @@ namespace ShortCommands
 		public static void handleCommad(scPlayer sPly, string Text, List<Command> validCommands, List<string> validText, List<List<string>> validArgs, bool CanBypassPermissions)
 		{
 			TShock.Utils.SendLogs(string.Format("{0} executed ShortCommand: {1}.", sPly.tsPly.Name, Text), Color.Red);
+			
+			var oldGroup = sPly.tsPly.Group;
+			if (CanBypassPermissions)
+				sPly.tsPly.Group = new SuperAdminGroup();
+
 			for (int i = 0; i < validCommands.Count; i++)
 			{
 				Command cmd = validCommands[i];
 				string cmdText = validText[i];
 				List<string> args = validArgs[i];
-				if (CanBypassPermissions && !sPly.tsPly.Group.HasPermission(cmd.Permission))
-				{
-					var oldGroup = sPly.tsPly.Group;
-					sPly.tsPly.Group = new SuperAdminGroup();
-					cmd.Run(cmdText, sPly.tsPly, args);
-					sPly.tsPly.Group = oldGroup;
-				}
-				else
-					cmd.Run(cmdText, sPly.tsPly, args);
+				
+				cmd.Run(cmdText, sPly.tsPly, args);
 			}
+
+			if (CanBypassPermissions)
+				sPly.tsPly.Group = oldGroup;
 		}
 		#endregion
 
