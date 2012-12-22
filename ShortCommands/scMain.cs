@@ -264,22 +264,21 @@ namespace ShortCommands
 					continue;
 				}
 
+				if (cmdText.Contains("%account") && !sPly.tsPly.IsLoggedIn)
+				{
+					sPly.tsPly.SendWarningMessage("You must be logged in to execute that command");
+					return;
+				}
+				cmdText = cmdText.Replace("%name", string.Format("\"{0}\"", sPly.tsPly.Name));
+				cmdText = cmdText.Replace("%account", string.Format("\"{0}\"", sPly.tsPly.UserAccountName));
+				cmdText = cmdText.Replace("%group", string.Format("\"{0}\"", sPly.tsPly.Group.Name));
+
 				var args = parseParameters(cmdText);
 				if (args.Count < 1 || string.IsNullOrWhiteSpace(cmdText))
 					continue;
 
 				string cmdName = args[0].ToLower();
 				args.RemoveAt(0);
-
-				for (int i = 0; i < args.Count; i++)
-				{
-					if (args[i].ToLower() == "%name")
-						args[i] = string.Format("\"{0}\"", sPly.tsPly.Name);
-					else if (args[i].ToLower() == "%account")
-						args[i] = string.Format("\"{0}\"", sPly.tsPly.UserAccountName) ?? string.Empty;
-					else if (args[i].ToLower() == "%group")
-						args[i] = string.Format("\"{0}\"", sPly.tsPly.Group.Name);
-				}
 
 				IEnumerable<Command> cmds = Commands.ChatCommands.Where(c => c.HasAlias(cmdName));
 
@@ -352,7 +351,7 @@ namespace ShortCommands
 				Command cmd = validCommands[i];
 				string cmdText = validText[i];
 				List<string> args = validArgs[i];
-				
+
 				cmd.Run(cmdText, sPly.tsPly, args);
 			}
 
