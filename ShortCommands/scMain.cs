@@ -343,8 +343,9 @@ namespace ShortCommands
 			TShock.Utils.SendLogs(string.Format("{0} executed ShortCommand: {1}.", sPly.tsPly.Name, Text), Color.Red);
 			
 			var oldGroup = sPly.tsPly.Group;
+			var superGroup = new SuperAdminGroup();
 			if (CanBypassPermissions)
-				sPly.tsPly.Group = new SuperAdminGroup();
+				sPly.tsPly.Group = superGroup;
 
 			for (int i = 0; i < validCommands.Count; i++)
 			{
@@ -353,6 +354,12 @@ namespace ShortCommands
 				List<string> args = validArgs[i];
 
 				cmd.Run(cmdText, sPly.tsPly, args);
+
+				if (CanBypassPermissions && sPly.tsPly.Group != superGroup)
+				{
+					oldGroup = sPly.tsPly.Group;
+					sPly.tsPly.Group = superGroup;
+				}
 			}
 
 			if (CanBypassPermissions)
